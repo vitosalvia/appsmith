@@ -18,8 +18,6 @@ import {
   PARSING_ERROR,
   EMPTY_RESPONSE_FIRST_HALF,
   EMPTY_JS_RESPONSE_LAST_HALF,
-  JS_SHORTCUT_FIRST_HALF,
-  JS_SHORTCUT_LAST_HALF,
 } from "@appsmith/constants/messages";
 import { EditorTheme } from "./CodeEditor/EditorConfig";
 import DebuggerLogs, {
@@ -43,8 +41,7 @@ import { DEBUGGER_TAB_KEYS } from "./Debugger/helpers";
 import EntityBottomTabs from "./EntityBottomTabs";
 import Icon from "components/ads/Icon";
 import { theme } from "constants/DefaultTheme";
-import { Button, Size, IconSize } from "components/ads";
-import { isMac } from "utils/helpers";
+import { Button, Size } from "components/ads";
 import { TAB_MIN_HEIGHT } from "components/ads/Tabs";
 
 const ResponseContainer = styled.div`
@@ -96,7 +93,7 @@ const NoResponseContainer = styled.div`
   height: 100%;
   width: max-content;
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
   flex-direction: column;
   margin: 0 auto;
   &.empty {
@@ -107,10 +104,6 @@ const NoResponseContainer = styled.div`
     svg {
       width: auto;
       height: 150px;
-      position: relative;
-      top: 24px;
-      left: -90px;
-      z-index: -1;
     }
   }
   .${Classes.TEXT} {
@@ -139,22 +132,6 @@ const InlineButton = styled(Button)`
   margin: 0 4px;
 `;
 
-const HighlightedText = styled.span`
-  color: #191919;
-  background: #ebebeb;
-  margin: 0 6px;
-  padding: 2px;
-  font-weight: 600;
-`;
-
-const NoResponseCTAWrapper = styled.div`
-  display: flex;
-  align-items: flex-end;
-  button {
-    height: 30px;
-  }
-`;
-
 enum JSResponseState {
   IsExecuting = "IsExecuting",
   IsDirty = "IsDirty",
@@ -174,22 +151,13 @@ type Props = ReduxStateProps &
     theme?: EditorTheme;
     jsObject: JSCollection;
     errors: Array<EvaluationError>;
-    children: React.ReactNode;
     disabled: boolean;
     isLoading: boolean;
     onButtonClick: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   };
 
-function getShortcut() {
-  return (
-    <HighlightedText>
-      {isMac() ? `CMD + ENTER` : `CTRL + ENTER`}
-    </HighlightedText>
-  );
-}
 function JSResponseView(props: Props) {
   const {
-    children,
     currentFunction,
     disabled,
     errors,
@@ -257,13 +225,10 @@ function JSResponseView(props: Props) {
                 switch (responseStatus) {
                   case JSResponseState.NoResponse:
                     return (
-                      <NoResponseContainer className="No">
-                        <NoResponseCTAWrapper>
-                          {children}
-                          <Icon name="no-js-response" size={IconSize.MEDIUM} />
-                        </NoResponseCTAWrapper>
+                      <NoResponseContainer>
+                        <Icon name="no-response" />
                         <Text type={TextType.P1}>
-                          {EMPTY_RESPONSE_FIRST_HALF()}
+                          {createMessage(EMPTY_RESPONSE_FIRST_HALF)}
                           <InlineButton
                             disabled={disabled}
                             isLoading={isLoading}
@@ -273,12 +238,7 @@ function JSResponseView(props: Props) {
                             text="Run"
                             type="button"
                           />
-                          {EMPTY_JS_RESPONSE_LAST_HALF()}
-                        </Text>
-                        <Text type={TextType.P1}>
-                          {createMessage(JS_SHORTCUT_FIRST_HALF)}
-                          {getShortcut()}
-                          {createMessage(JS_SHORTCUT_LAST_HALF)}
+                          {createMessage(EMPTY_JS_RESPONSE_LAST_HALF)}
                         </Text>
                       </NoResponseContainer>
                     );
