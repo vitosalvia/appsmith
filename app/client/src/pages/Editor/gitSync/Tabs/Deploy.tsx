@@ -124,12 +124,6 @@ function SubmitWrapper(props: {
   return <div onKeyDown={onKeyDown}>{props.children}</div>;
 }
 
-const SubTitle = styled.div`
-  margin-bottom: ${(props) => props.theme.spaces[7]}px;
-  ${(props) => getTypographyByKey(props, "p1")};
-  color: ${Colors.BLACK};
-`;
-
 const ActionsContainer = styled.div`
   display: flex;
   flex: 1;
