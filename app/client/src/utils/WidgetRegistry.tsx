@@ -145,6 +145,9 @@ import ProgressWidget, {
   CONFIG as PROGRESS_WIDGET_CONFIG,
 } from "widgets/ProgressWidget";
 import { registerWidget, WidgetConfiguration } from "./WidgetRegisterHelpers";
+import MapLiteWidget, {
+  CONFIG as MAPLITE_WIDGET_CONFIG,
+} from "widgets/MapLiteWidget";
 
 export const ALL_WIDGETS_AND_CONFIG = [
   [CanvasWidget, CANVAS_WIDGET_CONFIG],
@@ -152,6 +155,7 @@ export const ALL_WIDGETS_AND_CONFIG = [
   [ContainerWidget, CONTAINER_WIDGET_CONFIG],
   [TextWidget, TEXT_WIDGET_CONFIG],
   [TableWidget, TABLE_WIDGET_CONFIG],
+  [MapLiteWidget, MAPLITE_WIDGET_CONFIG],
   [CheckboxWidget, CHECKBOX_WIDGET_CONFIG],
   [RadioGroupWidget, RADIO_GROUP_WIDGET_CONFIG],
   [ButtonWidget, BUTTON_WIDGET_CONFIG],
