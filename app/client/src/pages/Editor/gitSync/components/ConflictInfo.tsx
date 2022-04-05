@@ -32,8 +32,8 @@ export default function ConflictInfo({
   learnMoreLink,
 }: Props) {
   return (
-    <>
-      <InfoWrapper isError>
+    <div data-testid="t--conflict-info-container">
+      <InfoWrapper data-testid="t--conflict-info-error-warning" isError>
         <Icon fillColor={Colors.CRIMSON} name="info" size={IconSize.XXXL} />
         <div style={{ display: "block" }}>
           <Text color={Colors.CRIMSON} type={TextType.P3}>
@@ -58,6 +58,6 @@ export default function ConflictInfo({
           width="max-content"
         />
       </Row>
-    </>
+    </div>
   );
 }
