@@ -25,30 +25,26 @@ const OpenRepoButton = styled(Button)`
   margin-right: ${(props) => props.theme.spaces[3]}px;
 `;
 
-type CIPropType = {
-  isConflicting?: boolean;
+type Props = {
+  browserSupportedRemoteUrl: string;
   learnMoreLink: string;
 };
 
-export default function ConflictInfo(props: CIPropType) {
-  const { isConflicting } = props;
-  const theme = useTheme() as Theme;
-  const gitMetaData = useSelector(getCurrentAppGitMetaData);
-  return isConflicting ? (
+export default function ConflictInfo({
+  browserSupportedRemoteUrl,
+  learnMoreLink,
+}: Props) {
+  return (
     <>
       <InfoWrapper isError>
         <Icon fillColor={Colors.CRIMSON} name="info" size={IconSize.XXXL} />
         <div style={{ display: "block" }}>
-          <Text
-            color={Colors.CRIMSON}
-            style={{ marginRight: theme.spaces[2] }}
-            type={TextType.P3}
-          >
+          <Text color={Colors.CRIMSON} type={TextType.P3}>
             {createMessage(GIT_CONFLICTING_INFO)}
           </Text>
           <Link
             color={Colors.CRIMSON}
-            link={props.learnMoreLink as string}
+            link={learnMoreLink}
             text={createMessage(LEARN_MORE)}
           />
         </div>
@@ -57,7 +53,7 @@ export default function ConflictInfo(props: CIPropType) {
         <OpenRepoButton
           category={Category.tertiary}
           className="t--commit-button"
-          href={gitMetaData?.browserSupportedRemoteUrl}
+          href={browserSupportedRemoteUrl}
           size={Size.large}
           tag="a"
           target="_blank"
@@ -66,5 +62,5 @@ export default function ConflictInfo(props: CIPropType) {
         />
       </Row>
     </>
-  ) : null;
+  );
 }

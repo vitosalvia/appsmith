@@ -272,7 +272,9 @@ export default function Merge() {
       <Space size={10} />
       {isConflicting && (
         <ConflictInfo
-          isConflicting={isConflicting}
+          browserSupportedRemoteUrl={
+            gitMetaData?.browserSupportedRemoteUrl || ""
+          }
           learnMoreLink={gitConflictDocumentUrl}
         />
       )}
