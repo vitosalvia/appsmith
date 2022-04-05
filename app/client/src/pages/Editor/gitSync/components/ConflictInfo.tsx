@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { useTheme } from "styled-components";
+import styled from "styled-components";
 import Text, { TextType } from "components/ads/Text";
 import InfoWrapper from "./InfoWrapper";
 import Link from "./Link";
@@ -9,10 +9,7 @@ import {
   LEARN_MORE,
   OPEN_REPO,
 } from "@appsmith/constants/messages";
-import { Theme } from "constants/DefaultTheme";
 import Button, { Category, Size } from "components/ads/Button";
-import { useSelector } from "store";
-import { getCurrentAppGitMetaData } from "selectors/applicationSelectors";
 import Icon, { IconSize } from "components/ads/Icon";
 import { Colors } from "constants/Colors";
 
