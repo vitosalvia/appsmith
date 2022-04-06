@@ -8,16 +8,7 @@ import * as topojson from "topojson-client";
 
 export default function GeoJsonData(props: any) {
   const layerRef = useRef(null);
-  const {
-    centerLayer,
-    defaultZoom,
-    map,
-    mapCenter,
-    otherProps,
-    updateCenter,
-    updateZoom,
-    zoom,
-  } = props;
+  const { centerLayer, defaultZoom, map, mapCenter, otherProps } = props;
   function addData(layer: any, jsonData: any) {
     if (jsonData.type === "Topology") {
       for (const key in jsonData.objects) {
@@ -40,14 +31,11 @@ export default function GeoJsonData(props: any) {
   }
 
   function fitBounds(layer: any) {
-    console.log("#########FIT BOUNDS");
     if (centerLayer) {
       map.fitBounds(layer.getBounds());
     } else {
       map.setView([mapCenter.lat, mapCenter.long], defaultZoom);
     }
-    //updateCenter(mapCenter.lat, mapCenter.long);
-    //updateZoom(map.getZoom());
   }
 
   useEffect(() => {

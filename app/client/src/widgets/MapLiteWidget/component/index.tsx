@@ -1,12 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  ImageOverlay,
-  MapContainer,
-  TileLayer,
-  useMapEvents,
-  WMSTileLayer,
-} from "react-leaflet";
+import { MapContainer, TileLayer, WMSTileLayer } from "react-leaflet";
 import GeoJsonData from "./GeoJsonData";
+import data from "./../data.json";
 
 export interface MapEventProps {
   updateCenter: (lat: number, long: number) => void;
@@ -31,7 +26,7 @@ export interface MapLiteComponentProps {
     lat: number;
     long: number;
   };
-  geojson: any;
+  geoJsonData: any;
   fitBoundGeojson: boolean;
   updateCenter: (lat: number, long: number) => void;
   updateZoom: (zoom: number) => void;
@@ -44,9 +39,16 @@ function MapEvents({ props }) {
   const onMoveEnd = useCallback(() => {
     map.invalidateSize();
   }, [map]);
+  /*  const onZoomEnd = useCallback(() => {
+    console.log("ZOOM END");
+    //props.updateZoom(map.getZoom());
+  }, [map]);*/
   useEffect(() => {
     map.on("moveend", onMoveEnd);
   }, [map, onMoveEnd]);
+  /*  useEffect(() => {
+    map.on("zoomend", onZoomEnd);
+  }, [map, onZoomEnd]);*/
   return null;
 }
 
@@ -87,7 +89,6 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
       updateZoom: this.props.updateZoom,
       map: map,
     };
-
     return (
       <MapContainer
         center={[this.props.mapCenter.lat, this.props.mapCenter.long]}
@@ -100,23 +101,20 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
           attribution='<a target="_blank" rel="noopener" href="https://www.imaa.cnr.it/" title="CNR IMAA"> MapLite CNR IMAA </> &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {!this.props.geojson ? <ViewMap props={updateMapProps} /> : null}
+        <ViewMap props={updateMapProps} />
         {map ? <MapEvents props={mapEventProps} /> : null}
-        {this.props.geojson ? (
+        {this.props.geoJsonData ? (
           <GeoJsonData
             centerLayer={this.props.fitBoundGeojson}
-            data={this.props.geojson}
+            data={this.props.geoJsonData}
             defaultZoom={defaultZoom}
             map={map}
             mapCenter={this.props.mapCenter}
-            updateCenter={this.props.updateCenter}
-            updateZoom={this.props.updateZoom}
-            zoom={this.props.zoom}
           />
         ) : null}
-
         {/*        <WMSTileLayer
           layers={"topp:states"}
+          format
           url="https://ahocevar.com/geoserver/wms"
         />*/}
       </MapContainer>
