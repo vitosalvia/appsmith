@@ -24,9 +24,12 @@ export default function GeoJsonData(props: any) {
   }
 
   function onEachFeature(feature: any, layer: any) {
+    let properties = "";
+    for (const property of Object.keys(feature.properties)) {
+      properties += property + ":" + feature.properties[property] + "<br />";
+    }
     if (feature.properties) {
-      const { NAME_0, VARNAME_3 } = feature.properties;
-      layer.bindPopup(`${VARNAME_3}, ${NAME_0}`);
+      layer.bindPopup(properties);
     }
   }
 
