@@ -1,0 +1,8 @@
+.leaflet-bottom.leaflet-left {
+  background-image: url("theme/logo_protezione_civile.png");
+  width: 8%;
+  height: 8%;
+  left: 4px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
