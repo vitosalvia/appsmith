@@ -8,13 +8,8 @@ import * as t from "topojson-client";
 import bbox from "@turf/bbox";
 
 export interface GeoJsonDataProps {
-  defaultZoom: number;
   features: any;
   map: any;
-  mapCenter: {
-    lat: number;
-    long: number;
-  };
   featureUrls: any[];
 }
 

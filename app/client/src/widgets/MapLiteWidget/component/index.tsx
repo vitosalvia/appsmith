@@ -98,10 +98,8 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
     };
 
     const geoJsonDataProps: GeoJsonDataProps = {
-      defaultZoom: defaultZoom,
       features: this.props.geoJsonData,
       map: map,
-      mapCenter: this.props.mapCenter,
       featureUrls: [],
     };
 
@@ -132,11 +130,9 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
         {map ? <MapEvents props={mapEventProps} /> : null}
         {map ? (
           <GeoJsonData
-            defaultZoom={geoJsonDataProps.defaultZoom}
             featureUrls={geoJsonDataProps.featureUrls}
             features={geoJsonDataProps.features}
             map={geoJsonDataProps.map}
-            mapCenter={geoJsonDataProps.mapCenter}
           />
         ) : null}
         {/*        <WMSTileLayer
