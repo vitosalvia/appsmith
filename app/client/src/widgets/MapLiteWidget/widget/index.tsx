@@ -1,15 +1,9 @@
 import React from "react";
 
 import BaseWidget, { WidgetProps, WidgetState } from "widgets/BaseWidget";
-import MapLiteComponent from "../component";
-import {
-  ValidationResponse,
-  ValidationTypes,
-} from "constants/WidgetValidation";
+import MapLiteComponent, { MapLiteComponentProps } from "../component";
+import { ValidationTypes } from "constants/WidgetValidation";
 import { EvaluationSubstitutionType } from "entities/DataTree/dataTreeFactory";
-import { AutocompleteDataType } from "../../../utils/autocomplete/TernServer";
-import { IconName } from "@blueprintjs/icons";
-import { Alignment } from "@blueprintjs/core";
 
 class MapLiteWidget extends BaseWidget<MapLiteWidgetProps, WidgetState> {
   static getPropertyPaneConfig() {
@@ -65,6 +59,23 @@ class MapLiteWidget extends BaseWidget<MapLiteWidgetProps, WidgetState> {
         ],
       },
       {
+        sectionName: "DataSource",
+        children: [
+          {
+            propertyName: "datasource",
+            helpText: "DataSource",
+            label: "",
+            controlType: "INPUT_TEXT",
+            placeholderText: "Name:",
+            isBindProperty: true,
+            isTriggerProperty: false,
+            validation: {
+              type: ValidationTypes.TEXT,
+            },
+          },
+        ],
+      },
+      {
         sectionName: "GeoJson",
         children: [
           {
@@ -91,15 +102,6 @@ class MapLiteWidget extends BaseWidget<MapLiteWidgetProps, WidgetState> {
             },
             evaluationSubstitutionType:
               EvaluationSubstitutionType.SMART_SUBSTITUTE,
-          },
-          {
-            propertyName: "fitBoundGeojson",
-            label: "Center Map",
-            controlType: "SWITCH",
-            helpText: "Center the map on layer",
-            isBindProperty: true,
-            isTriggerProperty: false,
-            isJsConvertible: true,
           },
         ],
       },
@@ -153,34 +155,12 @@ class MapLiteWidget extends BaseWidget<MapLiteWidgetProps, WidgetState> {
     ];
   }
 
-  componentDidUpdate(prevProps: MapLiteWidgetProps) {
-    /*    if (
-      JSON.stringify(prevProps.mapCenter) !==
-      JSON.stringify(this.props.mapCenter)
-    ) {
-      this.props.updateWidgetMetaProperty("mapCenter", this.props.mapCenter);
-      return;
-    }
-    console.log("###################componentDidUpdate");
-    console.log("###################" + this.props.zoom);*/
-  }
-
-  updateCenter = (lat: number, long: number) => {
-    this.props.updateWidgetMetaProperty("mapCenter", { lat, long });
-  };
-
-  updateZoom = (zoom: number) => {
-    this.props.updateWidgetMetaProperty("zoom", zoom);
-  };
-
   getPageView() {
     return (
       <MapLiteComponent
-        fitBoundGeojson={this.props.fitBoundGeojson}
+        datasource={this.props.datasource}
         geoJsonData={this.props.geoJsonData}
         mapCenter={this.props.mapCenter}
-        updateCenter={this.updateCenter}
-        updateZoom={this.updateZoom}
         urls={this.props.urls}
         widgetId={this.props.widgetId}
         zoom={this.props.zoom}
@@ -194,20 +174,8 @@ class MapLiteWidget extends BaseWidget<MapLiteWidgetProps, WidgetState> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface MapLiteWidgetProps extends WidgetProps {
-  zoom: number;
-  mapCenter: {
-    lat: number;
-    long: number;
-  };
-  geoJsonData: any;
-  fitBoundGeojson: boolean;
-  urls: Record<
-    string,
-    {
-      value: string;
-    }
-  >;
-}
+export interface MapLiteWidgetProps
+  extends MapLiteComponentProps,
+    WidgetProps {}
 
 export default MapLiteWidget;

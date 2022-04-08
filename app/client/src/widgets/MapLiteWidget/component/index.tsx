@@ -1,22 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { MapContainer, TileLayer, WMSTileLayer } from "react-leaflet";
-import GeoJsonData, { GeoJsonDataProps } from "./GeoJsonData";
-import data from "./../data.json";
-import { MapLiteWidgetProps } from "../widget";
+import React, { useCallback, useEffect } from "react";
+import { MapContainer, TileLayer } from "react-leaflet";
+import MapGeoJsonData from "./MapGeoJsonData";
+import MapGeoJsonUrlsData from "./MapGeoJsonUrlsData";
+import L, { LayerGroup } from "leaflet";
 
 export interface MapEventProps {
-  updateCenter: (lat: number, long: number) => void;
-  updateZoom: (zoom: number) => void;
   map: any;
 }
 
-export interface UpdateMapProps {
+export interface UpdateMapProps extends MapEventProps {
   mapCenter: {
     lat: number;
     long: number;
   };
   zoom: number;
-  map: any;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -28,9 +25,7 @@ export interface MapLiteComponentProps {
     long: number;
   };
   geoJsonData: any;
-  fitBoundGeojson: boolean;
-  updateCenter: (lat: number, long: number) => void;
-  updateZoom: (zoom: number) => void;
+  datasource: string;
   urls: Record<
     string,
     {
@@ -46,16 +41,9 @@ function MapEvents({ props }) {
   const onMoveEnd = useCallback(() => {
     map.invalidateSize();
   }, [map]);
-  /*  const onZoomEnd = useCallback(() => {
-    console.log("ZOOM END");
-    //props.updateZoom(map.getZoom());
-  }, [map]);*/
   useEffect(() => {
     map.on("moveend", onMoveEnd);
   }, [map, onMoveEnd]);
-  /*  useEffect(() => {
-    map.on("zoomend", onZoomEnd);
-  }, [map, onZoomEnd]);*/
   return null;
 }
 
@@ -71,18 +59,18 @@ function ViewMap({ props }) {
 }
 
 class MapLiteComponent extends React.Component<MapLiteComponentProps> {
+  layerGroup: LayerGroup;
+  private urlsMap: Map<string, any> = new Map();
   constructor(props: MapLiteComponentProps) {
     super(props);
     this.state = {
       map: null,
       defaultZoom: props.zoom,
     };
+    this.layerGroup = L.layerGroup();
   }
 
   render() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const defaultZoom = this.state.defaultZoom;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const map = this.state.map;
@@ -92,47 +80,51 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
       map: map,
     };
     const mapEventProps: MapEventProps = {
-      updateCenter: this.props.updateCenter,
-      updateZoom: this.props.updateZoom,
       map: map,
     };
 
-    const geoJsonDataProps: GeoJsonDataProps = {
-      features: this.props.geoJsonData,
-      map: map,
-      featureUrls: [],
-    };
+    let featureUrls: string[] = [];
 
     (Object.keys(this.props.urls) as Array<any>).forEach((f) => {
       if (this.props.urls[f]?.value) {
-        geoJsonDataProps.featureUrls = [
-          this.props.urls[f]?.value,
-          ...geoJsonDataProps.featureUrls,
-        ];
+        featureUrls = [this.props.urls[f]?.value, ...featureUrls];
       }
     });
-
     return (
       <MapContainer
         center={[this.props.mapCenter.lat, this.props.mapCenter.long]}
         id="mapLiteWidget"
         scrollWheelZoom={false}
-        whenCreated={(theMap: any) => this.setState({ map: theMap })}
+        whenCreated={(theMap: any) => {
+          this.setState({ map: theMap });
+          if (theMap) {
+            this.layerGroup.addTo(theMap);
+          }
+        }}
         zoom={this.props.zoom}
       >
         <TileLayer
           attribution='<a target="_blank" rel="noopener" href="https://www.imaa.cnr.it/" title="CNR IMAA"> MapLite CNR IMAA </> &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {geoJsonDataProps.featureUrls ? (
+        {this.props.geoJsonData || featureUrls ? (
           <ViewMap props={updateMapProps} />
         ) : null}
         {map ? <MapEvents props={mapEventProps} /> : null}
-        {map ? (
-          <GeoJsonData
-            featureUrls={geoJsonDataProps.featureUrls}
-            features={geoJsonDataProps.features}
-            map={geoJsonDataProps.map}
+        {map && this.props.geoJsonData ? (
+          <MapGeoJsonData
+            features={this.props.geoJsonData}
+            layerGroup={this.layerGroup}
+            map={map}
+            urlsMap={this.urlsMap}
+          />
+        ) : null}
+        {map && featureUrls ? (
+          <MapGeoJsonUrlsData
+            featureUrls={featureUrls}
+            layerGroup={this.layerGroup}
+            map={map}
+            urlsMap={this.urlsMap}
           />
         ) : null}
         {/*        <WMSTileLayer

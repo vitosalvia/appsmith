@@ -91,6 +91,10 @@ export function* bindDataToWidgetSaga(
       propertyPath = "defaultMarkers";
       propertyValue = `{{${currentAction.config.name}.data}}`;
       break;
+    case WidgetTypes.MAPLITE_WIDGET:
+      propertyPath = "datasource";
+      propertyValue = `{{${currentAction.config.name}.data}}`;
+      break;
     case WidgetTypes.RADIO_GROUP_WIDGET:
       propertyPath = "options";
       propertyValue = `{{${currentAction.config.name}.data}}`;
