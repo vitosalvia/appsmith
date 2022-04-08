@@ -3,6 +3,7 @@
 @import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
 @import "theme/colors.css";
 @import "theme/defaultTheme.css";
+@import "theme/leaflet.css";
 
 body {
   margin: 0;

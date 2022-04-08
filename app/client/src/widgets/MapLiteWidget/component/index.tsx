@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { MapContainer, TileLayer, WMSTileLayer } from "react-leaflet";
-import GeoJsonData from "./GeoJsonData";
+import GeoJsonData, { GeoJsonDataProps } from "./GeoJsonData";
 import data from "./../data.json";
+import { MapLiteWidgetProps } from "../widget";
 
 export interface MapEventProps {
   updateCenter: (lat: number, long: number) => void;
@@ -30,6 +31,12 @@ export interface MapLiteComponentProps {
   fitBoundGeojson: boolean;
   updateCenter: (lat: number, long: number) => void;
   updateZoom: (zoom: number) => void;
+  urls: Record<
+    string,
+    {
+      value: string;
+    }
+  >;
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -89,6 +96,24 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
       updateZoom: this.props.updateZoom,
       map: map,
     };
+
+    const geoJsonDataProps: GeoJsonDataProps = {
+      defaultZoom: defaultZoom,
+      features: this.props.geoJsonData,
+      map: map,
+      mapCenter: this.props.mapCenter,
+      featureUrls: [],
+    };
+
+    (Object.keys(this.props.urls) as Array<any>).forEach((f) => {
+      if (this.props.urls[f]?.value) {
+        geoJsonDataProps.featureUrls = [
+          this.props.urls[f]?.value,
+          ...geoJsonDataProps.featureUrls,
+        ];
+      }
+    });
+
     return (
       <MapContainer
         center={[this.props.mapCenter.lat, this.props.mapCenter.long]}
@@ -101,15 +126,17 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
           attribution='<a target="_blank" rel="noopener" href="https://www.imaa.cnr.it/" title="CNR IMAA"> MapLite CNR IMAA </> &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <ViewMap props={updateMapProps} />
+        {geoJsonDataProps.featureUrls ? (
+          <ViewMap props={updateMapProps} />
+        ) : null}
         {map ? <MapEvents props={mapEventProps} /> : null}
-        {this.props.geoJsonData ? (
+        {map ? (
           <GeoJsonData
-            centerLayer={this.props.fitBoundGeojson}
-            data={this.props.geoJsonData}
-            defaultZoom={defaultZoom}
-            map={map}
-            mapCenter={this.props.mapCenter}
+            defaultZoom={geoJsonDataProps.defaultZoom}
+            featureUrls={geoJsonDataProps.featureUrls}
+            features={geoJsonDataProps.features}
+            map={geoJsonDataProps.map}
+            mapCenter={geoJsonDataProps.mapCenter}
           />
         ) : null}
         {/*        <WMSTileLayer
