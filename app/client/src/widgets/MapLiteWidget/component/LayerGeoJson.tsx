@@ -13,7 +13,7 @@ export interface GeoJsonDataProps {
   urlsMap: Map<string, any>;
 }
 
-export default class MapGeoJsonData extends React.Component<GeoJsonDataProps> {
+export default class LayerGeoJson extends React.Component<GeoJsonDataProps> {
   constructor(props: GeoJsonDataProps) {
     super(props);
   }

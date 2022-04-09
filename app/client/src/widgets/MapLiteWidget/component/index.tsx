@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
-import MapGeoJsonData from "./MapGeoJsonData";
-import MapGeoJsonUrlsData from "./MapGeoJsonUrlsData";
+import LayerGeoJson from "./LayerGeoJson";
+import LayerGeoJsonUrls from "./LayerGeoJsonUrls";
 import L, { LayerGroup } from "leaflet";
 
 export interface MapEventProps {
@@ -112,7 +112,7 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
         ) : null}
         {map ? <MapEvents props={mapEventProps} /> : null}
         {map && this.props.geoJsonData ? (
-          <MapGeoJsonData
+          <LayerGeoJson
             features={this.props.geoJsonData}
             layerGroup={this.layerGroup}
             map={map}
@@ -120,7 +120,7 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
           />
         ) : null}
         {map && featureUrls ? (
-          <MapGeoJsonUrlsData
+          <LayerGeoJsonUrls
             featureUrls={featureUrls}
             layerGroup={this.layerGroup}
             map={map}
