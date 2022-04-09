@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import LayerGeoJson from "./LayerGeoJson";
 import LayerGeoJsonUrls from "./LayerGeoJsonUrls";
+import LayerDataSource from "./LayerDataSource";
 import L, { LayerGroup } from "leaflet";
 
 export interface MapEventProps {
@@ -84,7 +85,6 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
     };
 
     let featureUrls: string[] = [];
-
     (Object.keys(this.props.urls) as Array<any>).forEach((f) => {
       if (this.props.urls[f]?.value) {
         featureUrls = [this.props.urls[f]?.value, ...featureUrls];
@@ -122,6 +122,16 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
         {map && featureUrls ? (
           <LayerGeoJsonUrls
             featureUrls={featureUrls}
+            layerGroup={this.layerGroup}
+            map={map}
+            urlsMap={this.urlsMap}
+          />
+        ) : null}
+        {map &&
+        this.props.datasource?.trim() &&
+        this.props.datasource !== "{}" ? (
+          <LayerDataSource
+            datasource={this.props.datasource?.trim()}
             layerGroup={this.layerGroup}
             map={map}
             urlsMap={this.urlsMap}
