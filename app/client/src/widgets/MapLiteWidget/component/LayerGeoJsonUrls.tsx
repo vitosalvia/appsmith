@@ -8,9 +8,14 @@ import * as t from "topojson-client";
 import bbox from "@turf/bbox";
 import { addData } from "./MapLiteUtilities";
 
+export interface DataStyleInteface {
+  url: string;
+  style: string;
+}
+
 export interface GeoJsonDataUrlsProps {
   map: any;
-  featureUrls: any[];
+  featureUrls: DataStyleInteface[];
   layerGroup: LayerGroup;
   urlsMap: Map<string, any>;
 }
@@ -27,35 +32,57 @@ export default class LayerGeoJsonUrls extends React.Component<
   }
 
   componentDidUpdate(prevProps: GeoJsonDataUrlsProps) {
-    const layersToAdd: string[] = this.props.featureUrls.filter(
-      (item) => prevProps.featureUrls.indexOf(item) < 0,
+    const urlsPrev = prevProps.featureUrls.map((f: DataStyleInteface) => f.url);
+    const urls = this.props.featureUrls.map((f: DataStyleInteface) => f.url);
+
+    const layersToAdd: DataStyleInteface[] = this.props.featureUrls.filter(
+      (item: DataStyleInteface) => urlsPrev.indexOf(item.url) < 0,
     );
-    const layersToRemove: string[] = prevProps.featureUrls.filter(
-      (item) => this.props.featureUrls.indexOf(item) < 0,
+    const layersToRemove: DataStyleInteface[] = prevProps.featureUrls.filter(
+      (item: DataStyleInteface) => urls.indexOf(item.url) < 0,
     );
+
     //added new urls
     if (layersToAdd.length > 0) {
       this.addDataFromUrl(layersToAdd);
     }
     // removed urls
     else if (layersToRemove.length > 0) {
-      layersToRemove.forEach((u: string) => {
-        this.props.layerGroup.removeLayer(this.props.urlsMap.get(u));
-        this.props.urlsMap.delete(u);
+      layersToRemove.forEach((f: DataStyleInteface) => {
+        this.props.layerGroup.removeLayer(this.props.urlsMap.get(f.url));
+        this.props.urlsMap.delete(f.url);
       });
+    }
+    const layersToUpdateStyle: DataStyleInteface[] = [];
+    this.props.featureUrls.forEach((l: DataStyleInteface, index: number) => {
+      if (prevProps.featureUrls[index].style !== l.style) {
+        this.props.layerGroup.removeLayer(this.props.urlsMap.get(l.url));
+        this.props.urlsMap.delete(l.url);
+        layersToUpdateStyle.push(l);
+      }
+    });
+    if (layersToUpdateStyle.length > 0) {
+      this.addDataFromUrl(layersToUpdateStyle);
     }
   }
 
-  addDataFromUrl(featuresUrls: string[]) {
-    Promise.all(
-      featuresUrls.map((url) =>
-        fetch(url)
-          .then((response) => response.json())
-          .then((resp) => {
-            addData(url, resp, this.props.layerGroup, this.props.urlsMap);
-          }),
-      ),
-    );
+  addDataFromUrl(featuresUrls: DataStyleInteface[]) {
+    featuresUrls.map((dataStyleInteface: DataStyleInteface) => {
+      Promise.all([
+        fetch(dataStyleInteface.url),
+        dataStyleInteface.style ? fetch(dataStyleInteface.style) : null,
+      ])
+        .then(([res1, res2]) => Promise.all([res1.json(), res2?.json()]))
+        .then(([features, style]) =>
+          addData(
+            dataStyleInteface.url,
+            features,
+            this.props.layerGroup,
+            this.props.urlsMap,
+            style?.style_properties,
+          ),
+        );
+    });
   }
 
   render() {

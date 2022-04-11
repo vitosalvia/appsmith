@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import LayerGeoJson from "./LayerGeoJson";
-import LayerGeoJsonUrls from "./LayerGeoJsonUrls";
+import LayerGeoJsonUrls, { DataStyleInteface } from "./LayerGeoJsonUrls";
 import LayerDataSource from "./LayerDataSource";
 import L, { LayerGroup } from "leaflet";
 
@@ -30,7 +30,8 @@ export interface MapLiteComponentProps {
   urls: Record<
     string,
     {
-      value: string;
+      url: string;
+      style: string;
     }
   >;
 }
@@ -84,10 +85,13 @@ class MapLiteComponent extends React.Component<MapLiteComponentProps> {
       map: map,
     };
 
-    let featureUrls: string[] = [];
+    let featureUrls: DataStyleInteface[] = [];
     (Object.keys(this.props.urls) as Array<any>).forEach((f) => {
-      if (this.props.urls[f]?.value) {
-        featureUrls = [this.props.urls[f]?.value, ...featureUrls];
+      if (this.props.urls[f]?.url) {
+        featureUrls = [
+          { url: this.props.urls[f]?.url, style: this.props.urls[f]?.style },
+          ...featureUrls,
+        ];
       }
     });
     return (

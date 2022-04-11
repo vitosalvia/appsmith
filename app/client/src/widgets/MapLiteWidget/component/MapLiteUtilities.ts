@@ -4,14 +4,16 @@
  */
 
 import * as t from "topojson-client";
-import L, { LayerGroup } from "leaflet";
+import L, { Layer, LayerGroup } from "leaflet";
 import bbox from "@turf/bbox";
+import { getMarkerStyle, setFeatureStyle } from "./StyleUtilities";
 
 export function addData(
   key: string,
   features: any,
   layerGroup: LayerGroup,
   urlsMap: Map<string, any>,
+  style?: any,
 ) {
   if (features?.type === "Topology") {
     const f = [];
@@ -21,11 +23,21 @@ export function addData(
     }
     features = f;
   }
-  const layer = L.geoJSON(features, {
-    /*    style: (feature: any, layer: any) => setFeatureStyle(feature, style),
-      pointToLayer: (feature, latlng) => getMarkerStyle(feature, latlng, style),*/
-    onEachFeature: (feature, layer) => onEachFeature(feature, layer),
-  });
+  let option = {
+    onEachFeature: (feature: any, layer: any) => onEachFeature(feature, layer),
+  };
+  if (style) {
+    option = {
+      ...option,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      style: (feature: any, layer: any) => setFeatureStyle(feature, style),
+      pointToLayer: (feature: any, latlng: any) =>
+        getMarkerStyle(feature, latlng, style),
+    };
+  }
+  const layer = L.geoJSON(features, option);
+
   layer.addTo(layerGroup);
   urlsMap.set(key, layer);
 }

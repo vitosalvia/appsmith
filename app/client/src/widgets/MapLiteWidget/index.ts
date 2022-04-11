@@ -14,7 +14,7 @@ export const CONFIG = {
     zoom: 5,
     mapCenter: { lat: 41.34, long: 12.6 },
     animateLoading: true,
-    urls: [{ url: "" }],
+    urls: {},
   },
   properties: {
     derived: Widget.getDerivedPropertiesMap(),

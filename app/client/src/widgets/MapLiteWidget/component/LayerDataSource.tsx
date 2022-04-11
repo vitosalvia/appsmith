@@ -37,14 +37,12 @@ export default class LayerDataSource extends React.Component<
   }
 
   componentDidMount() {
-    if (this.props.datasource.trim() && this.props.datasource !== "{}") {
-      addData(
-        "datasource",
-        this.createFeatures(),
-        this.props.layerGroup,
-        this.props.urlsMap,
-      );
-    }
+    addData(
+      "datasource",
+      this.createFeatures(),
+      this.props.layerGroup,
+      this.props.urlsMap,
+    );
   }
 
   componentDidUpdate(prevProps: LayerDataSourceProps) {
@@ -56,8 +54,7 @@ export default class LayerDataSource extends React.Component<
   }
 
   createFeatures(): any {
-    let datasources: any[] = [];
-    datasources = JSON.parse(this.props.datasource);
+    const datasources: any[] = JSON.parse(this.props.datasource);
     const features: FeatureGeoJson[] = [];
     datasources.forEach((f: any) => {
       /*      for (const key of Object.keys(f)) {
